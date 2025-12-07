@@ -1,4 +1,5 @@
 from datetime import datetime
+import os
 import subprocess
 import time
 import random
@@ -44,7 +45,11 @@ def get_user_color(username):
     return USER_COLORS[username]
 
 
+last_message_count = -1
+
+
 def make_messages():
+    global last_message_count
     """messages.log -> messages panel"""
     messages = []
     try:
@@ -56,6 +61,17 @@ def make_messages():
                     messages.append(
                         Text.from_markup(f"[bold {color}]{username}[/]: {message}")
                     )
+
+        lastnotif = datetime.now()
+        if (
+            last_message_count != -1
+            and len(messages) > last_message_count
+            and (lastnotif - datetime.now()).total_seconds() > 5
+        ):
+            subprocess.Popen(["aplay", os.getenv("SOUNDFILE", "~/metal.wav")])
+
+        last_message_count = len(messages)
+
     except FileNotFoundError:
         return Panel(Text("messages.log not found", style="red"))
     return Panel(Group(*messages), title="Messages")
