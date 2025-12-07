@@ -46,10 +46,11 @@ def get_user_color(username):
 
 
 last_message_count = -1
+last_notification_time = datetime.min
 
 
 def make_messages():
-    global last_message_count
+    global last_message_count, last_notification_time
     """messages.log -> messages panel"""
     messages = []
     try:
@@ -62,14 +63,15 @@ def make_messages():
                         Text.from_markup(f"[bold {color}]{username}[/]: {message}")
                     )
 
-        lastnotif = datetime.now()
         if (
             last_message_count != -1
             and len(messages) > last_message_count
-            and (lastnotif - datetime.now()).total_seconds() > 5
+            and (datetime.now() - last_notification_time).total_seconds() > 5
         ):
             print("SOUND")
-            subprocess.Popen(["aplay", os.getenv("SOUNDFILE", "~/metal.wav")])
+            sound_file = os.path.expanduser(os.getenv("SOUNDFILE", "~/metal.wav"))
+            subprocess.Popen(["aplay", sound_file])
+            last_notification_time = datetime.now()
 
         last_message_count = len(messages)
 
