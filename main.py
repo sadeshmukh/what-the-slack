@@ -68,6 +68,7 @@ def make_messages():
             and len(messages) > last_message_count
             and (lastnotif - datetime.now()).total_seconds() > 5
         ):
+            print("SOUND")
             subprocess.Popen(["aplay", os.getenv("SOUNDFILE", "~/metal.wav")])
 
         last_message_count = len(messages)
