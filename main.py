@@ -77,7 +77,7 @@ def make_messages():
 
     except FileNotFoundError:
         return Panel(Text("messages.log not found", style="red"))
-    return Panel(Group(*messages), title="Messages")
+    return Panel(Group(*messages), title="#what-the-slack")
 
 
 def make_header():
